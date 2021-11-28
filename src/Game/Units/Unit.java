@@ -1,26 +1,26 @@
 package Game.Units;
 
 import java.util.Random;
+import java.util.function.Function;
 
 public abstract class Unit
 {
-    private static final int MAX_EXP = 99;
-    private static final int MAX_LEVEL = 9;
+    private final int MAX_EXP = 99;
+    private final int MAX_LEVEL = 9;
+    private final int MAX_DEXT = 90;
 
-    private final int MAX_FORCE;
-    private final int MAX_HP;
-    private final int MAX_DEXT;
-
+    private final int DEFAULT_HP;
+    private final int DEFAULT_DEXT;
 
     // Имя юнита
     private String name;
+
     // Параметр здоровья
     private int hp;
 
-    private int force;
+    private  int force;
 
-    // Параметр ловкости
-    private int dext;
+    private int defense;
 
     private int gold;
 
@@ -28,48 +28,57 @@ public abstract class Unit
 
     private int exp;
 
+    private boolean isCounter;
+    private Function<Unit, Integer> damageAlgorithm;
+
     // Юнита действующий или уничтожен
     private boolean isDestroyed;
 
-    public Unit(String name, int hp, int force, int dext, int level, int gold, int exp)
+    public Unit(String name, int hp, int force, int dext, int defense, int level, int gold, int exp)
     {
         this.name = name;
-        MAX_FORCE = force;
-        MAX_HP = hp;
-        MAX_DEXT = dext;
+        this.force = force;
+        DEFAULT_HP = hp;
+        DEFAULT_DEXT = dext;
         this.level = level > MAX_LEVEL? MAX_LEVEL: level;
-        this.force = MAX_FORCE * level;
-        this.dext = MAX_DEXT * level;
         this.gold = gold;
         this.exp = exp;
+        this.defense = defense;
+        isCounter = false;
+        isDestroyed = false;
+        damageAlgorithm = unit->unit.getDext() * 3 > new Random().nextInt(101) ? unit.getForce() : 0;
     }
 
-    /** Метод обработки получения повроеждения
-     *
-     * @param damage - значение повреждения
-     */
-    public void getDamaged(int damage)
+    public void getDamaged( Unit attacker, Function<Unit, Integer> damageAlgorithm, boolean x2)
     {
-        hp -= damage;
+        int damage = damageAlgorithm.apply(attacker) * (x2 ? 2 : 1);
+        hp -= damage - defense;
         if(hp <= 0) // Если здоровье ниже 0 то юнит уничтожен
         {
             isDestroyed = true;
-            System.out.println(String.format("%s get damage %d pts", name, damage));
-            System.out.println(String.format("%s destroyed +%d exp pts", name, exp));
+            System.out.println(String.format("%s get damage %d pts and destroyed!", name, damage));
         }
         else
             System.out.println(String.format("%s get damage %d pts", name, damage));
     }
 
-    /** Переопределённый метод атаки интрефейса воина
-     *
-     * @param unit - целевой юнит
-     */
     public void attack(Unit unit)
     {
         System.out.println(String.format("%s attacks %s", getName(), unit.getName()));
-        unit.getDamaged(force * new Random().nextInt(101) / 100); // вычисление силы повреждения
-        if(unit.isDestroyed()) gainExperience(unit.getExp());
+        if(unit.isCounter())
+        {
+            if(unit.getDext() * 3 > new Random().nextInt(101))
+                getDamaged(unit, damageAlgorithm, unit.isCounter());
+        }
+        else
+            unit.getDamaged(this, damageAlgorithm, false);
+
+        if(unit.isDestroyed())
+        {
+            System.out.format("[+%d exp | +%d gold]\n", unit.getExp(), unit.getGold());
+            gainExperience(unit.getExp());
+            gold += unit.getGold();
+        }
     }
 
     public void gainExperience(int exp)
@@ -81,6 +90,7 @@ public abstract class Unit
             level++;
             System.out.println("Level up!!!");
             this.exp = 0;
+            this.restoreHp();
             if(exp - MAX_EXP > 0) gainExperience(exp - MAX_EXP);
         }
     }
@@ -91,16 +101,8 @@ public abstract class Unit
      */
     public void addHp(int hp)
     {
-        this.hp += hp;
-    }
-
-    /** Получить значение здоровья
-     *
-     * @return hp
-     */
-    public int getHp()
-    {
-        return hp;
+        int maxHp = (int) (DEFAULT_HP + DEFAULT_HP * 0.1 * level);
+        this.hp = this.hp + hp > maxHp ? maxHp : this.hp + hp;
     }
 
     /** Проверка уничтожен ли юнит
@@ -109,6 +111,25 @@ public abstract class Unit
      */
     public boolean isDestroyed() { return isDestroyed; }
 
+    public boolean isCounter()
+    {
+        return isCounter;
+    }
+
+    protected void  setDefaultForce(int force)
+    {
+        this.force = force;
+    }
+
+    public void setDefense(int defense)
+    {
+        this.defense = defense;
+    }
+
+    public void restoreHp()
+    {
+        hp = (int) (DEFAULT_HP + DEFAULT_HP * 0.1 * level);
+    }
     /** Получить имя юнита
      *
      * @return имя юнита
@@ -118,8 +139,40 @@ public abstract class Unit
         return name;
     }
 
+    public int getGold()
+    {
+        return gold;
+    }
+
     public int getExp()
     {
         return exp;
     }
+
+    public int getHp()
+    {
+        return hp;
+    }
+
+    public int getMaxHp()
+    {
+        return (int) (DEFAULT_HP + DEFAULT_HP * 0.1 * level);
+    }
+
+    protected int getDefaultForce()
+    {
+       return force;
+    }
+
+    public int getForce()
+    {
+        return (int) (force + force * 0.1 * level);
+    }
+
+    public int getDext()
+    {
+        int dext = (int) (DEFAULT_DEXT + DEFAULT_DEXT * 0.1 * level);
+        return dext > MAX_DEXT ? MAX_DEXT : dext;
+    }
+
 }

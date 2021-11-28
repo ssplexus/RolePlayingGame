@@ -25,6 +25,10 @@ public class Equipment
         return eqType;
     }
 
+    public int getPropertyPoints() {
+        return propertyPoints;
+    }
+
     @Override
     public String toString()
     {
