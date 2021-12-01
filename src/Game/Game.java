@@ -1,56 +1,125 @@
 package Game;
 
+import Game.Equipment.Stuff.Medicine.Medicine;
+import Game.Equipment.Stuff.Armor.*;
+import Game.Equipment.Stuff.Medicine.SmallMedicine;
+import Game.Equipment.Stuff.Stuff;
+import Game.Equipment.Stuff.Weapon.Axe;
+import Game.Equipment.Stuff.Weapon.StrongAxe;
+import Game.Equipment.Stuff.Weapon.StrongSword;
+import Game.Equipment.Stuff.Weapon.Sword;
+import Game.Player.Player;
+import Game.Trader.PriceList;
+import Game.Trader.Trader;
+import Game.Units.Heroes.Dwarf;
+import Game.Units.Heroes.Elf;
+import Game.Units.Heroes.Knight;
+import Game.Units.Unit;
+
 import java.util.Scanner;
-import java.util.function.Supplier;
 
 public class Game
 {
 
+    Player player;
+    Trader trader;
+
+    public Game()
+    {
+        player = null;
+        trader = null;
+    }
+
+    private Player newPlayer()
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter your name:");
+        String name = scanner.nextLine() + "\n";
+
+        Unit hero = null;
+
+        while( true)
+        {
+            switch (Menu.getMenu(3, ()->String.format("Choose hero:\n1 - %s\n2 - %s\n3 - %s\n",
+                    Knight.getClassDefaultCharacteristics(),
+                    Elf.getClassDefaultCharacteristics(),
+                    Dwarf.getClassDefaultCharacteristics())))
+            {
+                case 1: hero = new Knight(name, new Sword(), new Shield(), new SimpleArmor());
+                    break;
+                case 2: hero = new Elf(name,new Sword(),new SimpleArmor());
+                    break;
+                case 3: hero = new Dwarf(name, new Axe(), new SimpleArmor());
+                default:
+                    continue;
+            }
+            break;
+        }
+        return new Player(hero);
+    }
+
+    private Trader createTrader()
+    {
+        Stuff traderGoods = new Stuff();
+        traderGoods.put(new StrongSword());
+        traderGoods.put(new StrongSword());
+        traderGoods.put(new StrongAxe());
+        traderGoods.put(new StrongShield());
+        traderGoods.put(new StrongArmor());
+        traderGoods.put(new SmallMedicine());
+        traderGoods.put(new SmallMedicine());
+        traderGoods.put(new SmallMedicine());
+        traderGoods.put(new SmallMedicine());
+
+        PriceList priceList = new PriceList();
+        priceList.addToList(new Sword(), 30);
+        priceList.addToList(new Axe(), 60);
+        priceList.addToList(new Shield(), 50);
+        priceList.addToList(new SimpleArmor(), 70);
+        priceList.addToList(new StrongSword(), 60);
+        priceList.addToList(new StrongAxe(), 120);
+        priceList.addToList(new StrongShield(), 100);
+        priceList.addToList(new StrongArmor(), 140);
+
+        return new Trader(traderGoods, priceList, null);
+    }
+
     public void run()
     {
 
-        while (getMainMenu() != 0)
-        {
+        int option = 0;
 
+        player = newPlayer();
+        trader = createTrader();
+        trader.setBuyer(player.getCharacter());
+
+        System.out.println(trader.getTraderGoods());
+        System.out.println(trader.getPriceList());
+
+        while (0 != (option = getMainMenu()))
+        {
+            if(option == 2)
+            {
+                Thread traderThread = new Thread(trader);
+                traderThread.start();
+                try
+                {
+                    traderThread.join();
+                }
+                catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     private int getMainMenu()
     {
-        return getMenu(3,()->"Enter command:\n" +
+        return Menu.getMenu(3,()->"Enter command:\n" +
                 "2 - 'Trader'\n"+
                 "1 - 'Dark forest'\n" +
                 "0 - 'Exit'\n");
     }
 
-    private int getMenu(int numOptions, Supplier<String> menu)
-    {
-        int command;
-
-        do
-        {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println(menu.get());
-
-            // Проверка корректности ввода команды
-
-            while (!scanner.hasNextInt())
-            {
-                System.out.println("It's not an integer!");
-                System.out.println("Enter command:");
-                scanner.next();
-            }
-            command = scanner.nextInt();
-            if(command <= numOptions && command >= 0) break;
-            System.out.println("Incorrect!");
-        }while (true);
-
-        if(command == 0) return command;
-        return command;
-    }
-
-    public void playerCustomize()
-    {
-
-    }
 }

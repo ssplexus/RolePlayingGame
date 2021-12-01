@@ -1,9 +1,9 @@
-package Game.Units;
+package Game.Units.Abilities;
 
 import Game.Equipment.Stuff.Armor.Armor;
 
 @FunctionalInterface
 public interface WearArmor
 {
-    void setArmor(Armor armor);
+    Armor setArmor(Armor armor);
 }

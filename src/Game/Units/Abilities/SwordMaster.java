@@ -1,9 +1,9 @@
-package Game.Units;
+package Game.Units.Abilities;
 
 import Game.Equipment.Stuff.Weapon.Sword;
 
 @FunctionalInterface
 public interface SwordMaster
 {
-    void setSword(Sword sword);
+    Sword setSword(Sword sword);
 }

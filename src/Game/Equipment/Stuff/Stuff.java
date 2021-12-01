@@ -6,18 +6,19 @@ import java.util.*;
 
 public class Stuff
 {
-    HashMap<Equipment, List<Equipment>> stuff;
+    private HashMap<Equipment, List<Equipment>> stuff;
 
     public Stuff()
     {
         this.stuff = new HashMap<>();
     }
 
-    protected void put(Equipment equipment)
+    public void put(Equipment equipment)
     {
+        if(equipment == null) return;
         try
         {
-            if(stuff.containsKey(equipment))
+            if(!stuff.containsKey(equipment))
                 stuff.put(equipment, new ArrayList<>());
             stuff.get(equipment).add(equipment);
         }
@@ -27,7 +28,7 @@ public class Stuff
         }
     }
 
-    protected Equipment get(Equipment equipment)
+    public Equipment get(Equipment equipment)
     {
         try
         {
@@ -40,7 +41,7 @@ public class Stuff
         }
         catch (NullPointerException e)
         {
-            e.printStackTrace();
+            System.out.println("Empty equipment element!");
         }
 
         return null;
@@ -53,8 +54,14 @@ public class Stuff
         stuff.forEach((equipment, list) -> stringBuilder.append(equipment).
                 append(" x " +
                         (Optional.ofNullable(list.size()).isPresent() ? list.size()
-                                : "0")
+                                : "0\n" + "\n")
                 ));
+
         return stringBuilder.toString();
+    }
+
+    public HashMap<Equipment, List<Equipment>> getStuff()
+    {
+        return stuff;
     }
 }

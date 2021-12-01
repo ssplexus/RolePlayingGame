@@ -32,8 +32,8 @@ public class Equipment
     @Override
     public String toString()
     {
-        return new StringBuilder().append(eqType + " :").
-                append("[ name = " + name  + "]").
+        return new StringBuilder().append(name + " :").
+                append("[ type = " + eqType  + "]").
                 append("[" + propertyName + " = " + propertyPoints + "]").toString();
     }
 

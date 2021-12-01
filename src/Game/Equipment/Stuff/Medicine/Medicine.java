@@ -1,6 +1,8 @@
-package Game.Equipment;
+package Game.Equipment.Stuff.Medicine;
 
-public class Medicine extends Equipment
+import Game.Equipment.Equipment;
+
+public abstract class Medicine extends Equipment
 {
     public Medicine(String name, int healPts)
     {

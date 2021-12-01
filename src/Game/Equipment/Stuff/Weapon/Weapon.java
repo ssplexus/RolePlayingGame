@@ -2,7 +2,7 @@ package Game.Equipment.Stuff.Weapon;
 
 import Game.Equipment.Equipment;
 
-public class Weapon extends Equipment
+public abstract class Weapon extends Equipment
 {
     public Weapon(String name, int dmgPts)
     {

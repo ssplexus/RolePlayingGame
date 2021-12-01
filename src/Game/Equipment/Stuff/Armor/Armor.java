@@ -1,6 +1,8 @@
-package Game.Equipment;
+package Game.Equipment.Stuff.Armor;
 
-public class Armor extends Equipment
+import Game.Equipment.Equipment;
+
+public abstract class Armor extends Equipment
 {
     public Armor(String name, int defPts)
     {

@@ -1,9 +1,9 @@
-package Game.Units;
+package Game.Units.Abilities;
 
 import Game.Equipment.Stuff.Armor.Shield;
 
 @FunctionalInterface
 public interface WieldShield
 {
-    void setShield(Shield shield);
+    Shield setShield(Shield shield);
 }

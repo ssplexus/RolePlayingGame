@@ -1,5 +1,9 @@
 package Game.Units;
 
+import Game.Equipment.Equipment;
+import Game.Equipment.Stuff.Weapon.Sword;
+
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -68,7 +72,9 @@ public abstract class Unit
         if(unit.isCounter())
         {
             if(unit.getDext() * 3 > new Random().nextInt(101))
-                getDamaged(unit, damageAlgorithm, unit.isCounter());
+                getDamaged(unit, damageAlgorithm, true);
+            else
+                unit.getDamaged(this, damageAlgorithm, true);
         }
         else
             unit.getDamaged(this, damageAlgorithm, false);
@@ -76,7 +82,7 @@ public abstract class Unit
         if(unit.isDestroyed())
         {
             System.out.format("[+%d exp | +%d gold]\n", unit.getExp(), unit.getGold());
-            gainExperience(unit.getExp());
+            gainExperience(unit.getExp()  + (int) (unit.getLevel() * unit.getExp() * 0.1));
             gold += unit.getGold();
         }
     }
@@ -102,7 +108,9 @@ public abstract class Unit
     public void addHp(int hp)
     {
         int maxHp = (int) (DEFAULT_HP + DEFAULT_HP * 0.1 * level);
+        int oldHp = this.hp;
         this.hp = this.hp + hp > maxHp ? maxHp : this.hp + hp;
+        System.out.printf("Health restored by %d pts", this.hp - oldHp);
     }
 
     /** Проверка уничтожен ли юнит
@@ -121,7 +129,7 @@ public abstract class Unit
         this.force = force;
     }
 
-    public void setDefense(int defense)
+    public void setDefaultDefense(int defense)
     {
         this.defense = defense;
     }
@@ -130,6 +138,12 @@ public abstract class Unit
     {
         hp = (int) (DEFAULT_HP + DEFAULT_HP * 0.1 * level);
     }
+
+    public void setGold(int gold)
+    {
+        this.gold = gold;
+    }
+
     /** Получить имя юнита
      *
      * @return имя юнита
@@ -137,6 +151,11 @@ public abstract class Unit
     public String getName()
     {
         return name;
+    }
+
+    public int getLevel()
+    {
+        return level;
     }
 
     public int getGold()
@@ -169,10 +188,33 @@ public abstract class Unit
         return (int) (force + force * 0.1 * level);
     }
 
+    protected int getDefaultDefense()
+    {
+        return defense;
+    }
+
     public int getDext()
     {
         int dext = (int) (DEFAULT_DEXT + DEFAULT_DEXT * 0.1 * level);
         return dext > MAX_DEXT ? MAX_DEXT : dext;
+    }
+
+    protected Equipment setAtackEquipment(Equipment oldEquipment, Equipment newEquipment)
+    {
+        setDefaultForce(getDefaultForce() - (oldEquipment != null ? oldEquipment.getPropertyPoints() : 0) +
+                newEquipment.getPropertyPoints());
+        Equipment oldEq = oldEquipment;
+        newEquipment  = oldEquipment;
+        return oldEq;
+    }
+
+    protected Equipment setDefenseEquipment(Equipment oldEquipment, Equipment newEquipment)
+    {
+        setDefaultDefense(getDefaultDefense() - (oldEquipment != null ? oldEquipment.getPropertyPoints() : 0) +
+                newEquipment.getPropertyPoints());
+        Equipment oldEq = oldEquipment;
+        newEquipment  = oldEquipment;
+        return oldEq;
     }
 
 }
