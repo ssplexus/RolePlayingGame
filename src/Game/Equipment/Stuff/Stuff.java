@@ -13,18 +13,19 @@ public class Stuff
         this.stuff = new HashMap<>();
     }
 
-    public void put(Equipment equipment)
+    public boolean put(Equipment equipment)
     {
-        if(equipment == null) return;
+        if(equipment == null) return false;
         try
         {
             if(!stuff.containsKey(equipment))
                 stuff.put(equipment, new ArrayList<>());
-            stuff.get(equipment).add(equipment);
+            return stuff.get(equipment).add(equipment);
         }
         catch (NullPointerException e)
         {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -47,6 +48,23 @@ public class Stuff
         return null;
     }
 
+    public Equipment getById(int idx, boolean buy)
+    {
+        Iterator<Equipment> itr = stuff.keySet().iterator();
+        int i = 0;
+        while(itr.hasNext())
+        {
+            Equipment equipment = itr.next();
+            if(idx == ++i)
+                 if(Optional.ofNullable(stuff.get(equipment)).isPresent())
+                            if(stuff.get(equipment).size() > 0)
+                                return buy? stuff.get(equipment).
+                                        remove(stuff.get(equipment).size() - 1):
+                                        equipment;
+        }
+        return null;
+    }
+
     @Override
     public String toString()
     {
@@ -56,6 +74,7 @@ public class Stuff
                         (Optional.ofNullable(list.size()).isPresent() ? list.size()
                                 : "0\n" + "\n")
                 ));
+
 
         return stringBuilder.toString();
     }

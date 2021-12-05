@@ -1,5 +1,6 @@
 package Game;
 
+import Game.BattleGround.BattleGround;
 import Game.Equipment.Stuff.Medicine.Medicine;
 import Game.Equipment.Stuff.Armor.*;
 import Game.Equipment.Stuff.Medicine.SmallMedicine;
@@ -34,7 +35,8 @@ public class Game
     {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your name:");
-        String name = scanner.nextLine() + "\n";
+        String name = scanner.nextLine();
+        System.out.println();
 
         Unit hero = null;
 
@@ -50,6 +52,7 @@ public class Game
                 case 2: hero = new Elf(name,new Sword(),new SimpleArmor());
                     break;
                 case 3: hero = new Dwarf(name, new Axe(), new SimpleArmor());
+                    break;
                 default:
                     continue;
             }
@@ -80,21 +83,19 @@ public class Game
         priceList.addToList(new StrongAxe(), 120);
         priceList.addToList(new StrongShield(), 100);
         priceList.addToList(new StrongArmor(), 140);
+        priceList.addToList(new SmallMedicine(), 20);
 
         return new Trader(traderGoods, priceList, null);
     }
 
     public void run()
     {
-
         int option = 0;
 
         player = newPlayer();
+        player.getCharacter().setGold(200);
         trader = createTrader();
         trader.setBuyer(player.getCharacter());
-
-        System.out.println(trader.getTraderGoods());
-        System.out.println(trader.getPriceList());
 
         while (0 != (option = getMainMenu()))
         {
@@ -105,10 +106,26 @@ public class Game
                 try
                 {
                     traderThread.join();
-                }
-                catch (InterruptedException e)
+                } catch (InterruptedException e)
                 {
                     e.printStackTrace();
+                }
+            }
+            if(option == 1)
+            {
+                Thread battleThread = new Thread(new BattleGround(player));
+                battleThread.start();
+                try
+                {
+                    battleThread.join();
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                if(player.getCharacter().isDestroyed())
+                {
+                    System.out.println("GAME OVER");
+                    break;
                 }
             }
         }
@@ -117,9 +134,9 @@ public class Game
     private int getMainMenu()
     {
         return Menu.getMenu(3,()->"Enter command:\n" +
-                "2 - 'Trader'\n"+
-                "1 - 'Dark forest'\n" +
-                "0 - 'Exit'\n");
+                "2 - Trader\n"+
+                "1 - Dark forest\n" +
+                "0 - Exit\n");
     }
 
 }

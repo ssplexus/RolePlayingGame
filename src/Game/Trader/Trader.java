@@ -1,16 +1,16 @@
 package Game.Trader;
 
 import Game.Equipment.Equipment;
+import Game.Equipment.Stuff.Medicine.Medicine;
 import Game.Equipment.Stuff.Stuff;
 import Game.Menu;
-import Game.Units.Heroes.Dwarf;
-import Game.Units.Heroes.Elf;
-import Game.Units.Heroes.Knight;
+import Game.Units.Abilities.Buyer;
 import Game.Units.Unit;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class Trader implements Runnable
 {
@@ -35,116 +35,47 @@ public class Trader implements Runnable
     {
         if(buyer == null || priceList == null || traderGoods == null) throw new IllegalArgumentException();
         int option = 0;
-        System.out.println("Welcome to my trade shop!");
-        System.out.println(traderGoods);
-        while (0 != (option = Menu.getMenu(priceList.getCount() + 1, () -> priceList.toString() + "0 - for exit")))
-        //while (0 != (option = Menu.getMenu(traderGoods.getStuff().size() + 1, () -> goodsWithPrices() + "0 - for exit")))
+        System.out.println("Welcome to my trade shop!\n");
+        System.out.printf("You have %d gold\n", buyer.getGold());
+        System.out.printf("You have %d/%d health pts.\n",buyer.getHp(), buyer.getMaxHp());
+        buyer.printEquipment();
+        System.out.println();
+        while (0 != (option = Menu.getMenu(traderGoods.getStuff().size() + 1, () -> goodsWithPrices() + "0 - for exit")))
         {
-            if(traderGoods.get(priceList.getGoods(option)) == null)
+            Equipment selectedEquip = traderGoods.getById(option, false);
+            if(selectedEquip == null)
             {
                 System.out.println("This product is out of stock!");
                 continue;
             }
-            if(priceList.getBuyPrice(option) > buyer.getGold())
+            if(priceList.getPrice(selectedEquip, false) > buyer.getGold())
             {
                 System.out.println("Sorry. You don't have enough money.");
                 continue;
             }
 
-            boolean isDeal = false;
-
-            if(buyer instanceof Knight)
+            if(selectedEquip instanceof Medicine)
             {
-                if (Knight.isApplicable(priceList.getGoods(option)))
-                {
-                    traderGoods.put(((Knight) buyer).
-                            buyEquipment(traderGoods.get(priceList.getGoods(option))));
-                    isDeal = true;
-                }
+                if (((Buyer)buyer).buy(traderGoods.get(selectedEquip)) != null)
+                    buyer.setGold(buyer.getGold() - priceList.getPrice(selectedEquip, true));
+                else
+                    System.out.println("Not applicable for you!\n");
+            }
+            else
+            {
+                if(traderGoods.put(((Buyer)buyer).buy(traderGoods.get(selectedEquip))))
+                    buyer.setGold(buyer.getGold() - priceList.getPrice(selectedEquip, true));
+                else
+                    System.out.println("Not applicable for you!\n");
             }
 
-            if(buyer instanceof Elf)
-            {
-                if(Elf.isApplicable(priceList.getGoods(option)))
-                {
-                    traderGoods.put(((Elf) buyer).
-                            buyEquipment(traderGoods.get(priceList.getGoods(option))));
-                    isDeal = true;
-                }
-            }
+            System.out.printf("You have %d gold\n", buyer.getGold());
+            System.out.printf("You have %d/%d health pts.\n",buyer.getHp(), buyer.getMaxHp());
+            buyer.printEquipment();
+            System.out.println();
 
-            if(buyer instanceof Dwarf)
-            {
-                if(Dwarf.isApplicable(priceList.getGoods(option)))
-                {
-                    traderGoods.put(((Dwarf) buyer).
-                            buyEquipment(traderGoods.get(priceList.getGoods(option))));
-                    isDeal = true;
-                }
-            }
-
-            if(isDeal) buyer.setGold(buyer.getGold() - priceList.getBuyPrice(option));
-            else System.out.println("Not applicable for you!");
         }
     }
-
-//    @Override
-//    public void run()
-//    {
-//        if(buyer == null || priceList == null || traderGoods == null) throw new IllegalArgumentException();
-//        int option = 0;
-//        System.out.println("Welcome to my trade shop!");
-//        System.out.println(traderGoods);
-//        while (0 != (option = Menu.getMenu(priceList.getCount() + 1, () -> priceList.toString() + "0 - for exit")))
-//        //while (0 != (option = Menu.getMenu(traderGoods.getStuff().size() + 1, () -> goodsWithPrices() + "0 - for exit")))
-//        {
-//            if(traderGoods.get(priceList.getGoods(option)) == null)
-//            {
-//                System.out.println("This product is out of stock!");
-//                continue;
-//            }
-//            if(priceList.getBuyPrice(option) > buyer.getGold())
-//            {
-//                System.out.println("Sorry. You don't have enough money.");
-//                continue;
-//            }
-//
-//            boolean isDeal = false;
-//
-//            if(buyer instanceof Knight)
-//            {
-//                if (Knight.isApplicable(priceList.getGoods(option)))
-//                {
-//                    traderGoods.put(((Knight) buyer).
-//                            buyEquipment(traderGoods.get(priceList.getGoods(option))));
-//                    isDeal = true;
-//                }
-//            }
-//
-//            if(buyer instanceof Elf)
-//            {
-//                if(Elf.isApplicable(priceList.getGoods(option)))
-//                {
-//                    traderGoods.put(((Elf) buyer).
-//                            buyEquipment(traderGoods.get(priceList.getGoods(option))));
-//                    isDeal = true;
-//                }
-//            }
-//
-//            if(buyer instanceof Dwarf)
-//            {
-//                if(Dwarf.isApplicable(priceList.getGoods(option)))
-//                {
-//                    traderGoods.put(((Dwarf) buyer).
-//                            buyEquipment(traderGoods.get(priceList.getGoods(option))));
-//                    isDeal = true;
-//                }
-//            }
-//
-//            if(isDeal) buyer.setGold(buyer.getGold() - priceList.getBuyPrice(option));
-//                else System.out.println("Not applicable for you!");
-//        }
-//    }
 
     public Stuff getTraderGoods() {
         return traderGoods;
@@ -158,19 +89,23 @@ public class Trader implements Runnable
     {
         StringBuilder res = new StringBuilder();
 
-        res.append("Goods list:\n");
+        res.append("Trader's goods list:\n");
 
-        Iterator<Equipment> itr = traderGoods.getStuff().keySet().iterator();
+        Iterator<Map.Entry<Equipment, List<Equipment>>> itr = traderGoods.getStuff().entrySet().iterator();
 
         int i = 0;
         while(itr.hasNext())
         {
-            Equipment entry = itr.next();
+            Map.Entry<Equipment, List<Equipment>> entry = itr.next();
+            Equipment key = entry.getKey();
+            List<Equipment> list = entry.getValue();
 
             res.append((++i) +") ").
-                    append(entry).
-                    append(String.format("[sell - %d gold]\n", priceList.getPrice(entry, true))).
-                    append(String.format("[buy - %d gold]\n", priceList.getPrice(entry,false)));
+                    append(key).
+                    append(String.format("[sell - %d gold]", priceList.getPrice(key,true))).
+                    append(String.format("[buy - %d gold]", priceList.getPrice(key,false))).
+                    append(" x " + (Optional.ofNullable(list.size()).isPresent() ? list.size() : 0)).
+                    append("\n");
         }
         return res.toString();
     }

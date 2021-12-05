@@ -1,6 +1,7 @@
 package Game.Units.Monsters;
 
 import Game.Equipment.Stuff.Armor.Armor;
+import Game.Equipment.Stuff.Armor.SimpleArmor;
 import Game.Equipment.Stuff.Weapon.Sword;
 import Game.Units.Abilities.SwordMaster;
 import Game.Units.Unit;
@@ -15,6 +16,10 @@ public class Skeleton extends Unit implements SwordMaster, WearArmor
     private Sword sword;
     private Armor armor;
 
+    public Skeleton ()
+    {
+        this("Skeleton", new Sword(), new SimpleArmor());
+    }
     public Skeleton(String name, Sword sword, Armor armor)
     {
         this(name, HP, FORCE + sword.getPropertyPoints(), DEXT, armor.getPropertyPoints(),
@@ -24,20 +29,20 @@ public class Skeleton extends Unit implements SwordMaster, WearArmor
                 Sword sword, Armor armor)
     {
         super(name, hp, force, dext, defense, level, gold, exp);
-        this.sword = sword;
-        this.armor =armor;
+        setSword(sword);
+        setArmor(armor);
     }
 
     @Override
     public Sword setSword(Sword sword)
     {
-        return (Sword) setAtackEquipment(this.sword, sword);
+        return (Sword) setEquipment(this.sword, this.sword = sword, true);
     }
 
     @Override
     public Armor setArmor(Armor armor)
     {
-        return (Armor) setDefenseEquipment(this.armor, armor);
+        return (Armor) setEquipment(this.armor, this.armor = armor,false);
     }
 
 }

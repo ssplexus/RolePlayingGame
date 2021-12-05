@@ -2,10 +2,7 @@ package Game.Trader;
 
 import Game.Equipment.Equipment;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class PriceList
@@ -69,9 +66,10 @@ public class PriceList
 
     public int getPrice(Equipment equipment, boolean sell)
     {
-        Integer price = priceList.get(equipment);
+        if(equipment == null) return 0;
+        int price = Optional.ofNullable(priceList.get(equipment)).isPresent() ? priceList.get(equipment): 0;
         if (sell) price -= (int)(price * 0.1);
-        return price == null ? 0 : price;
+        return price;
     }
 
     public int getBuyPrice(int idx)

@@ -1,6 +1,7 @@
 package Game.Units.Monsters;
 
 import Game.Equipment.Stuff.Armor.Armor;
+import Game.Equipment.Stuff.Armor.SimpleArmor;
 import Game.Equipment.Stuff.Weapon.Axe;
 import Game.Units.Abilities.AxeMaster;
 import Game.Units.Unit;
@@ -15,6 +16,11 @@ public class Goblin extends Unit implements AxeMaster, WearArmor
     private Axe axe;
     private Armor armor;
 
+    public Goblin()
+    {
+        this("Goblin", new Axe(), new SimpleArmor());
+    }
+
     public Goblin(String name, Axe axe, Armor armor)
     {
         this(name, HP, FORCE + axe.getPropertyPoints(),DEXT, armor.getPropertyPoints(), 0, 30, 40 , axe, armor);
@@ -22,20 +28,20 @@ public class Goblin extends Unit implements AxeMaster, WearArmor
 
     public Goblin(String name, int hp, int force, int dext, int defense, int level, int gold, int exp, Axe axe, Armor armor) {
         super(name, hp, force, dext, defense, level, gold, exp);
-        this.axe = axe;
-        this.armor = armor;
+        setAxe(axe);
+        setArmor(armor);
     }
 
     @Override
     public Axe setAxe(Axe axe)
     {
-        return (Axe) setAtackEquipment(this.axe, axe);
+        return (Axe) setEquipment(this.axe, this.axe = axe, true);
     }
 
     @Override
     public Armor setArmor(Armor armor)
     {
-        return (Armor) setDefenseEquipment(this.armor, armor);
+        return (Armor) setEquipment(this.armor, this.armor = armor,false);
     }
 
     public static String getClassDefaultCharacteristics()

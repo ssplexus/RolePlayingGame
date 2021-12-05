@@ -4,7 +4,7 @@ public class StrongShield extends Armor
 {
     public StrongShield()
     {
-        this("Strong shield", 5);
+        this("Strong Shield", 5);
     }
     private StrongShield(String name, int defPts)
     {

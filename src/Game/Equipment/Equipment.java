@@ -33,7 +33,7 @@ public class Equipment
     public String toString()
     {
         return new StringBuilder().append(name + " :").
-                append("[ type = " + eqType  + "]").
+                append("[type = " + eqType  + "]").
                 append("[" + propertyName + " = " + propertyPoints + "]").toString();
     }
 

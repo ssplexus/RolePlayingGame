@@ -5,13 +5,10 @@ import Game.Equipment.Stuff.Medicine.Medicine;
 import Game.Equipment.Stuff.Armor.Armor;
 import Game.Equipment.Stuff.Armor.Shield;
 import Game.Equipment.Stuff.Weapon.Sword;
-import Game.Units.Abilities.ApplyMedicine;
-import Game.Units.Abilities.SwordMaster;
+import Game.Units.Abilities.*;
 import Game.Units.Unit;
-import Game.Units.Abilities.WearArmor;
-import Game.Units.Abilities.WieldShield;
 
-public class Knight extends Unit implements SwordMaster, WearArmor, WieldShield, ApplyMedicine
+public class Knight extends Unit implements SwordMaster, WearArmor, WieldShield, ApplyMedicine, Buyer
 {
     public static final int HP = 50;
     public static final int FORCE = 5;
@@ -30,17 +27,22 @@ public class Knight extends Unit implements SwordMaster, WearArmor, WieldShield,
     }
     protected Knight(String name, int hp, int force, int dext, int defence, int level, int gold, int exp, Sword sword, Shield shield, Armor armor) {
         super(name, hp, force, dext, defence, level, gold, exp);
-        this.sword = sword;
-        this.shield = shield;
-        this.armor = armor;
+        setSword(sword);
+        setShield(shield);
+        setArmor(armor);
     }
 
-    public Equipment buyEquipment(Equipment equipment)
+    public Equipment buy(Equipment equipment)
     {
         if(equipment instanceof Sword) return setSword((Sword) equipment);
         if(equipment instanceof  Armor) return setArmor((Armor) equipment);
         if(equipment instanceof Shield) return setShield((Shield) equipment);
-        if(equipment instanceof  Medicine) applyMedicine((Medicine) equipment);
+        if(equipment instanceof  Medicine)
+        {
+            applyMedicine((Medicine) equipment);
+            return equipment;
+        }
+
         return null;
     }
 
@@ -54,19 +56,19 @@ public class Knight extends Unit implements SwordMaster, WearArmor, WieldShield,
     @Override
     public Sword setSword(Sword sword)
     {
-        return (Sword) setAtackEquipment(this.sword, sword);
+        return (Sword) setEquipment(this.sword, this.sword = sword, true);
     }
 
     @Override
     public Armor setArmor(Armor armor)
     {
-        return (Armor) setDefenseEquipment(this.armor, armor);
+        return (Armor) setEquipment(this.armor, this.armor = armor, false);
     }
 
     @Override
     public Shield setShield(Shield shield)
     {
-        return (Shield) setDefenseEquipment(this.shield, shield);
+        return (Shield) setEquipment(this.shield, this.shield = shield,false);
     }
 
     @Override
