@@ -23,7 +23,7 @@ public class Skeleton extends Unit implements SwordMaster, WearArmor
     public Skeleton(String name, Sword sword, Armor armor)
     {
         this(name, HP, FORCE + sword.getPropertyPoints(), DEXT, armor.getPropertyPoints(),
-                0,10,20, sword, armor);
+                0,10,120, sword, armor);
     }
     private Skeleton(String name, int hp, int force, int dext, int defense, int level, int gold, int exp,
                 Sword sword, Armor armor)

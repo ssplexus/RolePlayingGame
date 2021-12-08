@@ -6,13 +6,10 @@ import Game.Equipment.Stuff.Armor.Armor;
 import Game.Equipment.Stuff.Armor.Shield;
 import Game.Equipment.Stuff.Weapon.Axe;
 import Game.Equipment.Stuff.Weapon.Sword;
-import Game.Units.Abilities.ApplyMedicine;
-import Game.Units.Abilities.AxeMaster;
-import Game.Units.Abilities.Buyer;
+import Game.Units.Abilities.*;
 import Game.Units.Unit;
-import Game.Units.Abilities.WearArmor;
 
-public class Dwarf extends Unit implements AxeMaster, WearArmor, ApplyMedicine, Buyer
+public class Dwarf extends Unit implements AxeMaster, WearArmor, ApplyMedicine, GainExperience, Buyer
 {
     public static final int HP = 70;
     public static final int FORCE = 10;
@@ -36,7 +33,11 @@ public class Dwarf extends Unit implements AxeMaster, WearArmor, ApplyMedicine, 
     {
         if(equipment instanceof Axe) return setAxe((Axe) equipment);
         if(equipment instanceof  Armor) return setArmor((Armor) equipment);
-        if(equipment instanceof  Medicine) applyMedicine((Medicine) equipment);
+        if(equipment instanceof  Medicine)
+        {
+            applyMedicine((Medicine) equipment);
+            return equipment;
+        }
         return null;
     }
 

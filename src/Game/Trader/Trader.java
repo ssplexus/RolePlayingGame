@@ -57,14 +57,22 @@ public class Trader implements Runnable
             if(selectedEquip instanceof Medicine)
             {
                 if (((Buyer)buyer).buy(traderGoods.get(selectedEquip)) != null)
-                    buyer.setGold(buyer.getGold() - priceList.getPrice(selectedEquip, true));
+                    buyer.setGold(buyer.getGold() - priceList.getPrice(selectedEquip, false));
                 else
                     System.out.println("Not applicable for you!\n");
             }
             else
             {
-                if(traderGoods.put(((Buyer)buyer).buy(traderGoods.get(selectedEquip))))
-                    buyer.setGold(buyer.getGold() - priceList.getPrice(selectedEquip, true));
+                Equipment oldEquip = traderGoods.put(((Buyer)buyer).buy(traderGoods.get(selectedEquip)));
+                if(oldEquip != null)
+                {
+                    buyer.setGold(buyer.getGold() - priceList.getPrice(selectedEquip, false));
+                    buyer.setGold(buyer.getGold() + priceList.getPrice(oldEquip, true));
+                    System.out.printf("You bought %s [-%d gold]\n",selectedEquip.getName(),
+                            priceList.getPrice(selectedEquip, false));
+                    System.out.printf("You sold your old %s [+%d gold]\n",
+                            oldEquip.getName(), priceList.getPrice(oldEquip, true));
+                }
                 else
                     System.out.println("Not applicable for you!\n");
             }

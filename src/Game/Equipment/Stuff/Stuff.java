@@ -13,19 +13,19 @@ public class Stuff
         this.stuff = new HashMap<>();
     }
 
-    public boolean put(Equipment equipment)
+    public Equipment put(Equipment equipment)
     {
-        if(equipment == null) return false;
+        if(equipment == null) return null;
         try
         {
             if(!stuff.containsKey(equipment))
                 stuff.put(equipment, new ArrayList<>());
-            return stuff.get(equipment).add(equipment);
+            return stuff.get(equipment).add(equipment)? equipment: null;
         }
         catch (NullPointerException e)
         {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

@@ -54,7 +54,7 @@ public class BattleGround implements Runnable
                 if (option == 2)
                 {
                     System.out.println("You trying to counter enemy...");
-                    player.getCharacter().tryToCounter();
+                    player.getCharacter().tryToCounter(true);
                 }
                 if (option == 1) player.getCharacter().attack(enemy, false);
                 if (option == 0)

@@ -1,6 +1,7 @@
 package Game.Units;
 
 import Game.Equipment.Equipment;
+import Game.Units.Abilities.GainExperience;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,28 +77,34 @@ public abstract class Unit
         System.out.println(String.format("%s attacks %s", getName(), unit.getName()));
         if(unit.isCounter())
         {
+            unit.tryToCounter(false);
             if(unit.getDext() * 3 > new Random().nextInt(101))
             {
-                System.out.printf("%s goblin was counterattacked!", getName());
+                System.out.printf("%s was counterattacked!\n", getName());
 //                getDamaged(unit, damageAlgorithm, true);
-                unit.attack(this, x2);
+                unit.attack(this, true);
+                return;
             }
             else
             {
-                System.out.printf("%s's counter failed!");
-                System.out.println(String.format("%s attacks %s", unit.getName(), getName()));
+                System.out.printf("%s's counter failed!\n", unit.getName());
+
                 unit.getDamaged(this, damageAlgorithm, true);
+                //System.out.println(String.format("%s attacks %s", unit.getName(), getName()));
+                //unit.getDamaged(this, damageAlgorithm, true);
             }
         }
         else
-            unit.getDamaged(this, damageAlgorithm, false);
+            unit.getDamaged(this, damageAlgorithm, x2);
 
         if(unit.isDestroyed())
         {
-            System.out.printf("%s is destroyed!\n", unit.getName());
-            System.out.printf("[+%d exp | +%d gold]\n", unit.getExp(), unit.getGold());
-            gainExperience(unit.getExp()  + (int) (getLevel() * unit.getExp() * 0.1));
-            gold += unit.getGold();
+            if(this instanceof GainExperience)
+            {
+                System.out.printf("[+%d exp | +%d gold]\n", unit.getExp(), unit.getGold());
+                gainExperience(unit.getExp()  + (int) (getLevel() * unit.getExp() * 0.1));
+                gold += unit.getGold();
+            }
         }
     }
 
@@ -124,7 +131,7 @@ public abstract class Unit
         int maxHp = (int) (DEFAULT_HP + DEFAULT_HP * 0.1 * level);
         int oldHp = this.hp;
         this.hp = this.hp + hp > maxHp ? maxHp : this.hp + hp;
-        System.out.printf("Health restored by %d pts", this.hp - oldHp);
+        System.out.printf("Health restored by %d pts\n", this.hp - oldHp);
     }
 
     /** Проверка уничтожен ли юнит
@@ -144,9 +151,9 @@ public abstract class Unit
         isDestroyed = true;
     }
 
-    public void tryToCounter()
+    public void tryToCounter(boolean isCounter)
     {
-        isCounter = true;
+        this.isCounter = isCounter;
     }
 
     protected void  setDefaultForce(int force)
@@ -258,8 +265,8 @@ public abstract class Unit
     @Override
     public String toString()
     {
-        return String.format("%s : [force = %d pts.][defense = %d pts.][dext = %d pts.][hp = %d/%d pts.]",
-                getName(), getForce(), getDefense(), getDext(), getHp(), getMaxHp());
+        return String.format("%s: [level = %d][force = %d pts.][defense = %d pts.][dext = %d pts.][hp = %d/%d pts.]",
+                getName(), getLevel(), getForce(), getDefense(), getDext(), getHp(), getMaxHp());
     }
 
 }

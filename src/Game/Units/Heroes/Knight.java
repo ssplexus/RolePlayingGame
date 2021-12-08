@@ -8,7 +8,7 @@ import Game.Equipment.Stuff.Weapon.Sword;
 import Game.Units.Abilities.*;
 import Game.Units.Unit;
 
-public class Knight extends Unit implements SwordMaster, WearArmor, WieldShield, ApplyMedicine, Buyer
+public class Knight extends Unit implements SwordMaster, WearArmor, WieldShield, ApplyMedicine, GainExperience, Buyer
 {
     public static final int HP = 50;
     public static final int FORCE = 5;

@@ -1,6 +1,6 @@
 package Game.Equipment.Stuff.Armor;
 
-public class StrongShield extends Armor
+public class StrongShield extends Shield
 {
     public StrongShield()
     {

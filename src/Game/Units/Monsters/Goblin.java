@@ -23,7 +23,7 @@ public class Goblin extends Unit implements AxeMaster, WearArmor
 
     public Goblin(String name, Axe axe, Armor armor)
     {
-        this(name, HP, FORCE + axe.getPropertyPoints(),DEXT, armor.getPropertyPoints(), 0, 30, 40 , axe, armor);
+        this(name, HP, FORCE + axe.getPropertyPoints(),DEXT, armor.getPropertyPoints(), 0, 30, 240 , axe, armor);
     }
 
     public Goblin(String name, int hp, int force, int dext, int defense, int level, int gold, int exp, Axe axe, Armor armor) {

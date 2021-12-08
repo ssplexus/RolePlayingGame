@@ -1,6 +1,6 @@
 package Game.Equipment.Stuff.Weapon;
 
-public class StrongAxe extends Weapon
+public class StrongAxe extends Axe
 {
     public StrongAxe()
     {
