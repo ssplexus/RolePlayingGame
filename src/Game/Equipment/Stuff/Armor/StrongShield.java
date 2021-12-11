@@ -1,6 +1,9 @@
 package Game.Equipment.Stuff.Armor;
 
-public class StrongShield extends Shield
+/**
+ * Класс крепкого щита
+ */
+public class StrongShield extends Armor
 {
     public StrongShield()
     {

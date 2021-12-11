@@ -1,5 +1,8 @@
 package Game.Equipment.Stuff.Medicine;
 
+/**
+ * Класс маленького медикамента
+ */
 public class SmallMedicine extends Medicine
 {
     public  SmallMedicine()

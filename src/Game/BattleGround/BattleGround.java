@@ -8,34 +8,44 @@ import Game.Units.Unit;
 
 import java.util.Random;
 
+/**
+ *  Класс поля битвы
+ */
 public class BattleGround implements Runnable
 {
-    private Player player;
+    private Player player; // игрок
 
+    /** Конструктор поля битвы
+     *
+     * @param player - игрок
+     */
     public BattleGround(Player player)
     {
         this.player = player;
     }
 
+    /**
+     * Запуск битвы
+     */
     @Override
     public void run()
     {
         System.out.println("You entered a dark forest!");
         Unit enemy = null;
-        if(new Random().nextInt(101) > 70)
-            enemy = new Skeleton();
+        if(new Random().nextInt(101) > 30)
+            enemy = new Skeleton(); // с вероятностью 70% встретить скелета
         else
-            enemy = new Goblin();
+            enemy = new Goblin(); // 30% встретить гоблина
         System.out.printf("You were attacked by a %s!\n", enemy.getName());
 
-        System.out.println(player.getCharacter());
-        System.out.println(enemy);
+        System.out.println(player.getCharacter()); // вывод характеристик игрока
+        System.out.println(enemy); // вывод характеристик врага
 
-        boolean isEnemyTurn = false;
-        while (!player.getCharacter().isDestroyed() && !enemy.isDestroyed())
+        boolean isEnemyTurn = false; // признак хода противника
+        while (!player.getCharacter().isDestroyed() && !enemy.isDestroyed()) // цикл пока жив игрок и противник
         {
-            player.getCharacter().printHP();
-            enemy.printHP();
+            player.getCharacter().printHP(); // вывод здоровья игрока
+            enemy.printHP(); // вывод здоровья врага
             System.out.println();
             try
             {
@@ -46,21 +56,21 @@ public class BattleGround implements Runnable
                 e.printStackTrace();
             }
 
-            if(isEnemyTurn)
+            if(isEnemyTurn) // ход противника
                 enemy.attack(player.getCharacter(), false);
             else
             {
-                int option = getBattleMenu();
-                if (option == 2)
+                int option = getBattleMenu(); // выбор опции меню
+                if (option == 2) // попытаться контратаковать врага
                 {
                     System.out.println("You trying to counter enemy...");
                     player.getCharacter().tryToCounter(true);
                 }
-                if (option == 1) player.getCharacter().attack(enemy, false);
-                if (option == 0)
+                if (option == 1) player.getCharacter().attack(enemy, false); // атаковать врага
+                if (option == 0) // попытаться убежать
                 {
                     System.out.println("You trying to escape...");
-                    if(new Random().nextInt(101) < 50)
+                    if(new Random().nextInt(101) < 50) // шанс сбежать 50/50
                     {
                         player.getCharacter().setDestroyed();
                         System.out.println("Fail!");
@@ -72,10 +82,10 @@ public class BattleGround implements Runnable
                     }
                 }
             }
-            isEnemyTurn = isEnemyTurn? false: true;
+            isEnemyTurn = isEnemyTurn? false: true; // переход хода
         }
 
-        if(player.getCharacter().isDestroyed())
+        if(player.getCharacter().isDestroyed()) // если персонаж игрока мёртв, то игра окончена
             System.out.println("You are dead!");
         else
             System.out.println("Enemy is dead");

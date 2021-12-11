@@ -2,9 +2,12 @@ package Game.Equipment.Stuff.Weapon;
 
 import Game.Equipment.Equipment;
 
+/**
+ * Базовый абстрактный класс оружия
+ */
 public abstract class Weapon extends Equipment
 {
-    public Weapon(String name, int dmgPts)
+    protected Weapon(String name, int dmgPts)
     {
         this(name, "Weapon", "Damage(pts.)", dmgPts);
     }

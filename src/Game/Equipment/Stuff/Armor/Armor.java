@@ -2,9 +2,12 @@ package Game.Equipment.Stuff.Armor;
 
 import Game.Equipment.Equipment;
 
+/**
+ *  Базовый абстрактный класс снаряжения для защиты
+ */
 public abstract class Armor extends Equipment
 {
-    public Armor(String name, int defPts)
+    protected Armor(String name, int defPts)
     {
         this(name, "Armor", "Defense(pts.)", defPts);
     }

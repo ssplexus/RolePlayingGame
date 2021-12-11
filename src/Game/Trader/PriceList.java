@@ -2,18 +2,31 @@ package Game.Trader;
 
 import Game.Equipment.Equipment;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
+/**
+ * Класс списка цен
+ */
 public class PriceList
 {
-    private LinkedHashMap<Equipment, Integer> priceList;
+    private LinkedHashMap<Equipment, Integer> priceList; // список пар товар-цена
 
+    /**
+     * Конструктор списка цен
+     */
     public PriceList()
     {
         priceList = new LinkedHashMap<>();
     }
 
+    /** Метод добавления в список
+     *
+     * @param product - товар
+     * @param price - цена
+     */
     public void addToList(Equipment product, int price)
     {
         try
@@ -25,18 +38,11 @@ public class PriceList
             e.printStackTrace();
         }
     }
-    public void setPrice(Equipment product, int price)
-    {
-        try
-        {
-            priceList.replace(product,price);
-        }
-        catch (NullPointerException e)
-        {
-            e.printStackTrace();
-        }
-    }
 
+    /** Метод формирования строкового представления объекта списка цен
+     *
+     * @return строковое представление объекта списка цен
+     */
     @Override
     public String toString()
     {
@@ -52,41 +58,23 @@ public class PriceList
             int price = entry.getValue();
             res.append((++i) +") ").
             append(equipment).
-            append(" [sell - " + price + " gold]").
-            append("[buy - ").append((int)(price - price * 0.1)).append(" gold]\n");
+            append(" [sell - " + price + " gold]"). // цена продажи торговцу
+            append("[buy - ").append((int)(price - price * 0.1)).append(" gold]\n"); // цена покупки у торговца
         }
         return res.toString();
     }
 
-    public int getSellPrice(int idx)
-    {
-        if(idx < 0 || idx > priceList.size()) return 0;
-        return (int)(priceList.values().toArray()[idx]);
-    }
-
+    /** Метод получения цены на товар
+     *
+     * @param equipment - товар
+     * @param sell - признак цена продажи или цена покупки
+     * @return - цена нат товар
+     */
     public int getPrice(Equipment equipment, boolean sell)
     {
         if(equipment == null) return 0;
         int price = Optional.ofNullable(priceList.get(equipment)).isPresent() ? priceList.get(equipment): 0;
-        if (sell) price -= (int)(price * 0.1);
+        if (sell) price -= (int)(price * 0.1); // цена покупки на 10% меньше цены продажи
         return price;
-    }
-
-    public int getBuyPrice(int idx)
-    {
-        if(idx < 0 || idx > priceList.size()) return 0;
-        int price = (int)(priceList.values().toArray()[idx]);
-        return (int)(price - price * 0.1);
-    }
-
-    public Equipment getGoods(int idx)
-    {
-        if(idx < 0 || idx > priceList.size()) return null;
-        return (Equipment) (priceList.keySet().toArray()[idx]);
-    }
-
-    public int getCount()
-    {
-        return priceList.size();
     }
 }

@@ -19,18 +19,24 @@ import Game.Units.Unit;
 
 import java.util.Scanner;
 
+/**
+ * Класс игры
+ */
 public class Game
 {
+    private Player player;  // игрок
+    private Trader trader;  // торговец
 
-    Player player;
-    Trader trader;
-
+    /**
+     * Конструктор
+     */
     public Game()
     {
         player = null;
         trader = null;
     }
 
+    // Метод создания игрока
     private Player newPlayer()
     {
         Scanner scanner = new Scanner(System.in);
@@ -38,32 +44,35 @@ public class Game
         String name = scanner.nextLine();
         System.out.println();
 
-        Unit hero = null;
+        Unit hero = null; // указатель на выбранного героя
 
-        while( true)
+        while (true)
         {
+            // Выбор героя
             switch (Menu.getMenu(3, ()->String.format("Choose hero:\n1 - %s\n2 - %s\n3 - %s\n",
-                    Knight.getClassDefaultCharacteristics(),
-                    Elf.getClassDefaultCharacteristics(),
-                    Dwarf.getClassDefaultCharacteristics())))
+                    Knight.getClassDefaultCharacteristics(), // характеристики рыцаря
+                    Elf.getClassDefaultCharacteristics(), // характеристики эльфа
+                    Dwarf.getClassDefaultCharacteristics()))) // характеристики гнома
             {
-                case 1: hero = new Knight(name, new Sword(), new Shield(), new SimpleArmor());
+                case 1: hero = new Knight(name, new Sword(), new Shield(), new SimpleArmor()); // рыцарь
                     break;
-                case 2: hero = new Elf(name,new Sword(),new SimpleArmor());
+                case 2: hero = new Elf(name,new Sword(),new SimpleArmor()); // эльф
                     break;
-                case 3: hero = new Dwarf(name, new Axe(), new SimpleArmor());
+                case 3: hero = new Dwarf(name, new Axe(), new SimpleArmor()); // гном
                     break;
                 default:
                     continue;
             }
             break;
         }
-        return new Player(hero);
+        return new Player(hero); // возврат нового объекта игрока
     }
 
+    // Метод создания торговца
     private Trader createTrader()
     {
-        Stuff traderGoods = new Stuff();
+        Stuff traderGoods = new Stuff(); // создаём хранилище товаров
+        // Добавление товаров
         traderGoods.put(new StrongSword());
         traderGoods.put(new StrongSword());
         traderGoods.put(new StrongAxe());
@@ -74,7 +83,8 @@ public class Game
         traderGoods.put(new SmallMedicine());
         traderGoods.put(new SmallMedicine());
 
-        PriceList priceList = new PriceList();
+        PriceList priceList = new PriceList(); // создание списка цен
+        // Добавление цен на товары
         priceList.addToList(new Sword(), 30);
         priceList.addToList(new Axe(), 60);
         priceList.addToList(new Shield(), 50);
@@ -83,46 +93,48 @@ public class Game
         priceList.addToList(new StrongAxe(), 120);
         priceList.addToList(new StrongShield(), 100);
         priceList.addToList(new StrongArmor(), 140);
-        priceList.addToList(new SmallMedicine(), 20);
+        priceList.addToList(new SmallMedicine(), 15);
 
-        return new Trader(traderGoods, priceList, null);
+        return new Trader(traderGoods, priceList, null); // возврат нового объекта торговца
     }
 
+    /**
+     *  Метод запуска игры
+     */
     public void run()
     {
-        int option = 0;
+        int option = 0; // для хранения опции меню
 
-        player = newPlayer();
-        player.getCharacter().setGold(200);
-        trader = createTrader();
-        trader.setBuyer(player.getCharacter());
+        player = newPlayer(); // создание игрока
+        trader = createTrader(); // создание торговца
+        trader.setBuyer(player.getCharacter()); // назначаем в качестве покупателя персонажа игрока
 
-        while (0 != (option = getMainMenu()))
+        while (0 != (option = getMainMenu())) // цикл пока в меню не выбран 0
         {
-            if(option == 2)
+            if(option == 2) // вход в торговую лавку
             {
                 Thread traderThread = new Thread(trader);
-                traderThread.start();
+                traderThread.start(); // запуск потока торговца
                 try
                 {
-                    traderThread.join();
+                    traderThread.join(); // ожидание окончания торговли
                 } catch (InterruptedException e)
                 {
                     e.printStackTrace();
                 }
             }
-            if(option == 1)
+            if(option == 1) // вход в тёмный лес
             {
-                Thread battleThread = new Thread(new BattleGround(player));
-                battleThread.start();
+                Thread battleThread = new Thread(new BattleGround(player)); // создание арены, помещаем туда игрока
+                battleThread.start(); // битва началась
                 try
                 {
-                    battleThread.join();
+                    battleThread.join(); // ожидание окончания битвы
                 } catch (InterruptedException e)
                 {
                     e.printStackTrace();
                 }
-                if(player.getCharacter().isDestroyed())
+                if(player.getCharacter().isDestroyed()) // если выбранный персонаж убит, то игра окончена
                 {
                     System.out.println("GAME OVER");
                     break;
@@ -131,6 +143,7 @@ public class Game
         }
     }
 
+    // Метод главного меню
     private int getMainMenu()
     {
         return Menu.getMenu(3,()->"Enter command:\n" +
