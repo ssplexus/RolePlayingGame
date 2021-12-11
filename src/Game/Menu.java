@@ -3,8 +3,17 @@ package Game;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
+/**
+ * Класс меню
+ */
 public class Menu
 {
+    /**
+     * Статический метод вызова меню
+     * @param numOptions - число допустимых опций
+     * @param menu - лямбда функция получения текста меню
+     * @return - выбранная опция
+     */
     public static int getMenu(int numOptions, Supplier<String> menu)
     {
         int command;
@@ -25,9 +34,9 @@ public class Menu
             command = scanner.nextInt();
             if(command <= numOptions && command >= 0) break;
             System.out.println("Incorrect!");
-        }while (true);
+        }
+        while (true);
 
-        if(command == 0) return command;
         return command;
     }
 }

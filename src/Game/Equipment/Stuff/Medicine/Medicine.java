@@ -2,9 +2,12 @@ package Game.Equipment.Stuff.Medicine;
 
 import Game.Equipment.Equipment;
 
+/**
+ * Базовый абстрактный класс медикамента
+ */
 public abstract class Medicine extends Equipment
 {
-    public Medicine(String name, int healPts)
+    protected Medicine(String name, int healPts)
     {
         this(name, "Medicine", "Healing (pts.)", healPts);
     }
