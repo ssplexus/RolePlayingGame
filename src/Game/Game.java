@@ -113,7 +113,8 @@ public class Game
         {
             if(option == 2) // вход в торговую лавку
             {
-                Thread traderThread = new Thread(trader);
+                Thread traderThread = new Thread(trader, "'Trader Thread'");
+                traderThread.setUncaughtExceptionHandler(threadExceptionHandler());
                 traderThread.start(); // запуск потока торговца
                 try
                 {
@@ -125,7 +126,8 @@ public class Game
             }
             if(option == 1) // вход в тёмный лес
             {
-                Thread battleThread = new Thread(new BattleGround(player)); // создание арены, помещаем туда игрока
+                Thread battleThread = new Thread(new BattleGround(player), "'BattleGround Thread'"); // создание арены, помещаем туда игрока
+                battleThread.setUncaughtExceptionHandler(threadExceptionHandler());
                 battleThread.start(); // битва началась
                 try
                 {
@@ -150,6 +152,12 @@ public class Game
                 "2 - Trader\n"+
                 "1 - Dark forest\n" +
                 "0 - Exit\n");
+    }
+
+    // Обработчик исключений в потоках
+    private Thread.UncaughtExceptionHandler threadExceptionHandler()
+    {
+        return (t, e) -> System.out.println(e + " in " +  t.getName());
     }
 
 }

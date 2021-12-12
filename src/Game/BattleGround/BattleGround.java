@@ -30,6 +30,7 @@ public class BattleGround implements Runnable
     @Override
     public void run()
     {
+        if(player == null ) throw new IllegalArgumentException();
         System.out.println("You entered a dark forest!");
         Unit enemy = null;
         if(new Random().nextInt(101) > 30)
